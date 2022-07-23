@@ -1,4 +1,4 @@
-# Luster-KMOD-2.12.9-with-ZFS-0.7.13-on-Centos-7.9
+# Lustre-KMOD-2.12.9-with-ZFS-0.7.13-on-Centos-7.9
 
 After compiling the KMOD modules of Lustre 2.12.9 with ZFS 0.7.13 on CentOS 7.9, kernel 3.10.0-1160.49.1. 
 When trying to install the  compiled rpms with "yum" command, it report huge keym errors:
