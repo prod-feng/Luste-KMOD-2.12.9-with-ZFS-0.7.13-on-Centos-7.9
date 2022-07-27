@@ -78,7 +78,7 @@ One way is to comment line 106 to 107 of file : /usr/lib/rpm/redhat/find-require
 
 ```
 
-You need to use the "--with-spec=[generic|redhat]" to choose which mode you want to use. 
+You need to use the "--with-spec=[generic|redhat]" to choose which mode you want to use. The default mode us generic. 
 
 
 The "redhat" mode by default will export all the provided ksy functions. The only issue for the redhat mode is it can only support the lastest Linux 
