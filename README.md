@@ -120,7 +120,7 @@ This way to force rpmbuild to scan and export the provided ksym functions of the
 
 # Solution 3
 
-Just download the pre-compiled rpms. Ignore the warning. Install kmod SPL/ZFS, then runing the follwing command to install Lustre:
+Just download the pre-compiled rpms. Ignore the errors. Install kmod SPL/ZFS, then runing the follwing command to install Lustre:
 
 ```text
 
