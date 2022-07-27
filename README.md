@@ -66,7 +66,7 @@ One way is to comment line 106 to 107 of file : /usr/lib/rpm/redhat/find-require
  
 # Solution 2:
  
- The ZFS/SPL packages can be built from source to include these kernel ksym export functions provided by the kernel modules. They have two building modes: generic and redhat, and provide correlate spec files:
+ The ZFS/SPL packages can be built from source to include these kernel ksym export functions provided by the kernel modules. They have two building modes: generic and redhat, and provide correlated spec files:
  ```text
  
  rpm/generic/spl-kmod.spec
