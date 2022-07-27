@@ -1,5 +1,11 @@
 # Lustre-KMOD-2.12.9-with-ZFS-0.7.13-on-Centos-7.9
 
+```text
+
+rpm --version
+RPM version 4.11.3
+
+```
 After compiling the KMOD modules of Lustre 2.12.9 with ZFS 0.7.13 on CentOS 7.9, kernel 3.10.0-1160.49.1. 
 When trying to install the  compiled rpms with "yum" command, it report huge keym errors:
 
@@ -25,6 +31,8 @@ Error: Package: kmod-lustre-osd-zfs-2.12.9-1.el7.x86_64 (/kmod-lustre-osd-zfs-2.
 
 It looks like it is caused just by the rpm/rpmbuild used, nothing related to the Lustre software itself.
  Since the same version of DKMS package works just fine on the same server.
+ 
+# Solution 1:
  
 The only option seems is NOT to generat these ksym module requirements at all(risky!).
 
@@ -56,4 +64,51 @@ One way is to comment line 106 to 107 of file : /usr/lib/rpm/redhat/find-require
  
  Note: this is only a temporary hack for rpm to let Lustre KMOD module can be istalled. It can be very risky.
  
+# Solution 2:
  
+ The ZFS/SPL packages can be built from source to include these kernel ksym export functions provided by the kernel modules. They have two building modes: generic and redhat. Which provide correlate spec files:
+ ```text
+ 
+ rpm/generic/spl-kmod.spec
+ rpm/redhat/spl-kmod.spec
+ and 
+ 
+ rpm/generic/zfs.spec
+ rpm/redhat/zfs.spec
+
+```
+
+You need to use the "--with-spec=[generic|redhat]" to choose which mode you want to use. 
+
+
+The "redhat" mode by default will export all the provided ksy functions. The only issue for the redhat mode is it can only support the lastest Linux 
+kernel installed. If you want to install on an older kernel(while you have a newer kernel on the same computer), the build will the fail. If that's the case, you can change one line of file:
+
+```text
+vi /usr/lib/rpm/redhat/macros
+...
+#change line 214 from:
+
+%global kverrel %(%{kmodtool} verrel %{?kernel_version} 2>/dev/null) 
+
+to 
+
+%global kverrel %(%{kmodtool} verrel  2>/dev/null)
+
+```
+Then it will fix the issue.
+
+For the generic mode, you need to add one line in the spec file(before %prep):
+
+```text
+
+%global _use_internal_dependency_generator 0
+
+```
+
+This way to force rpmbuild to scan and export the provided ksym functions of the compiled kernel module.
+
+
+
+
+
