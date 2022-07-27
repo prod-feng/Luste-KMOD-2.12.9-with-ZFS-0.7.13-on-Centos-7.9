@@ -81,8 +81,8 @@ One way is to comment line 106 to 107 of file : /usr/lib/rpm/redhat/find-require
 You need to use the "--with-spec=[generic|redhat]" to choose which mode you want to use. The default mode us generic. 
 
 
-The "redhat" mode by default will export all the provided ksy functions. The only issue for the redhat mode is it can only support the lastest Linux 
-kernel installed. If you want to install on an older kernel(while you have a newer kernel on the same computer), the build will the fail. If that's the case, you can change one line of file:
+The "redhat" mode by default will export all the provided ksym functions. The only issue for the redhat mode is it can only support the lastest Linux 
+kernel installed. If you want to install on an older kernel(while you have a newer kernel on the same computer), the build will then fail. If that's the case, you can change one line of a file:
 
 ```text
 vi /usr/lib/rpm/redhat/macros
@@ -91,7 +91,7 @@ vi /usr/lib/rpm/redhat/macros
 
 %global kverrel %(%{kmodtool} verrel %{?kernel_version} 2>/dev/null) 
 
-to 
+#to 
 
 %global kverrel %(%{kmodtool} verrel  2>/dev/null)
 
@@ -102,6 +102,9 @@ For the generic mode, you need to add one line in the spec file(before %prep):
 
 ```text
 
+vi rpm/generic/spl-kmod.spec
+
+#add the following line before %prep
 %global _use_internal_dependency_generator 0
 
 ```
@@ -110,5 +113,13 @@ This way to force rpmbuild to scan and export the provided ksym functions of the
 
 
 
+# Solution 3
 
+Just down load the pre-compiled rpms. Install kmod SPL/ZFS. then runing the follwing command to install Lustre:
+
+```text
+
+rpm -ivh --nodeps  *lustre*.rpm
+
+```
 
