@@ -34,9 +34,9 @@ It looks like it is caused just by the rpm/rpmbuild used, nothing related to the
  
 # Solution 1:
  
-The only option seems is NOT to generat these ksym module requirements at all(risky!).
+For the Lustre packages, one option seems is NOT to generat these ksym module requirements at all(risky!).
 
-One way is to comment line 106 to 107 of file : /usr/lib/rpm/redhat/find-requires.ksyms 
+## A) Comment line 106 and 107 of file : /usr/lib/rpm/redhat/find-requires.ksyms 
  
  ```text
  /usr/lib/rpm/redhat/find-requires.ksyms 
@@ -46,7 +46,7 @@ One way is to comment line 106 to 107 of file : /usr/lib/rpm/redhat/find-require
 ```
  
  
- Or comment ling 156 of /usr/lib/rpm/redhat/find-requires
+ ## Or comment ling 156 of /usr/lib/rpm/redhat/find-requires
 
  
  ```text
@@ -62,7 +62,47 @@ One way is to comment line 106 to 107 of file : /usr/lib/rpm/redhat/find-require
  
  should work. 
  
- Note: this is only a temporary hack for rpm to let Lustre KMOD module can be istalled. It can be very risky.
+ Note: this is only a temporary hack for rpm to let Lustre KMOD module can be istalled. 
+ 
+ Added:
+ 
+ ## B) Add one line in the lustre.spec file(and lustre.spec.in before run ./configure command), just before %prep.
+ 
+ ```text
+
+#add the following line to disable the ksym requires/provides scan,before %prep.
+%global _use_internal_dependency_generator 1
+
+%prep
+
+ ```
+ 
+ The reason is it seems that when call the rpmbuild's macro "%kernel_module_package", it will overwrite some spec varaibles you set before.In this way,
+ the compiled kmod rpm has no kernel/ksym requires and provides:
+ 
+ ```text
+ 
+$ rpm -qp --requires kmod-lustre-2.12.9-1.el7.x86_64.rpm
+/bin/sh
+/bin/sh
+/bin/sh
+/usr/sbin/depmod
+/usr/sbin/depmod
+kernel >= 3.10.0-1160
+kernel < 3.10.0-1161
+rpmlib(CompressedFileNames) <= 3.0.4-1
+rpmlib(FileDigests) <= 4.6.0-1
+rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+rpmlib(PayloadIsXz) <= 5.2-1
+
+$ rpm -qp --provides kmod-lustre-2.12.9-1.el7.x86_64.rpm
+kernel-modules >= 3.10.0-1160.49.1.el7_lustre.x86_64
+kmod-lustre = 2.12.9-1.el7
+kmod-lustre(x86-64) = 2.12.9-1.el7
+lustre-kmod = 2.12.9-1.el7
+
+
+ ```
  
 # Solution 2:
  
@@ -85,6 +125,7 @@ You need to use
 ```
 to choose which mode you want to use. The default mode us generic. 
 
+## Redhat mode
 
 The "redhat" mode by default will export all the provided ksym functions. The only issue for the redhat mode is it can only support the lastest Linux 
 kernel installed. If you want to install on an older kernel(while you have a newer kernel on the same computer), the build will then fail. If that's the case, you can change one line of a file:
@@ -103,6 +144,7 @@ vi /usr/lib/rpm/redhat/macros
 ```
 Then it will fix the issue.
 
+## Generic mode
 For the generic mode, you need to add one line in the spec file(before %prep):
 
 ```text
