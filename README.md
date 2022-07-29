@@ -66,7 +66,7 @@ For the Lustre packages, one option seems is NOT to generat these ksym module re
  
  Added:
  
- ## B) Add one line in the lustre.spec file(and lustre.spec.in before run ./configure command), just before %prep.
+ ## B) Add one line in the lustre.spec file(and lustre.spec.in before run ./configure command), just before %prep, after all the calls of macro "%kernel_module_package".
  
  ```text
 
