@@ -32,7 +32,7 @@ Error: Package: kmod-lustre-osd-zfs-2.12.9-1.el7.x86_64 (/kmod-lustre-osd-zfs-2.
 It looks like it is caused just by the rpm/rpmbuild used, nothing related to the Lustre software itself.
  Since the same version of DKMS package works just fine on the same server.
  
-# Solution 1:
+# Solution 1: Disable the kernel/ksym requires when building Lustre module.
  
 For the Lustre packages, one option seems is NOT to generat these ksym module requirements at all(risky!).
 
@@ -104,7 +104,7 @@ lustre-kmod = 2.12.9-1.el7
 
  ```
  
-# Solution 2:
+# Solution 2: Build SPL and ZFS with kernel and ksym function provides (and requires) exported.
  
  The ZFS/SPL packages can be built from source to include these kernel ksym export functions provided by the kernel modules. They have two building modes: generic and redhat, and provide correlated spec files:
  ```text
@@ -160,7 +160,7 @@ This way to force rpmbuild to scan and export the provided ksym functions of the
 
 
 
-# Solution 3
+# Solution 3 Force to install Lustre while ignoring the ksym error.
 
 Just download the pre-compiled rpms. Ignore the errors. Install kmod SPL/ZFS, then runing the follwing command to install Lustre:
 
