@@ -34,9 +34,9 @@ It looks like it is caused just by the rpm/rpmbuild used, nothing related to the
  
 # Solution 1: Disable the kernel/ksym requires when building Lustre module.
  
-For the Lustre packages, one option seems is NOT to generat these ksym module requirements at all(risky!).
+For the Lustre packages, one option seems is NOT to generat these ksym module requirements at all(risky!). There are methods to do so:
 
-## A) Comment line 106 and 107 of file : /usr/lib/rpm/redhat/find-requires.ksyms 
+## Method A) Comment line 106 and 107 of file : /usr/lib/rpm/redhat/find-requires.ksyms 
  
  ```text
  /usr/lib/rpm/redhat/find-requires.ksyms 
@@ -64,9 +64,8 @@ For the Lustre packages, one option seems is NOT to generat these ksym module re
  
  Note: this is only a temporary hack for rpm to let Lustre KMOD module can be istalled. 
  
- Added:
  
- ## B) Add one line in the lustre.spec file(and lustre.spec.in before run ./configure command), just before %prep, after all the calls of macro "%kernel_module_package".
+ ## Method B) Add one line in the lustre.spec file(and lustre.spec.in before run ./configure command), just before %prep, after all the calls of macro "%kernel_module_package".
  
  ```text
 
